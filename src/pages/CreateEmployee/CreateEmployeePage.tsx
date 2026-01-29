@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 
 import { createEmployee } from "../../firebase/employees";
+import CheckIcon from "@mui/icons-material/Check";
 
 type Step = 1 | 2;
 
@@ -36,32 +37,34 @@ const StepCircle = ({
     value,
 }: {
     variant: "active" | "done" | "inactive";
-    value: number | "✓";
+    value: number | "icon";
 }) => {
-    const bg =
-        variant === "active" ? green : variant === "done" ? green : "#E5E7EB";
-    const color = variant === "inactive" ? "#6B7280" : "#FFFFFF";
-
     return (
         <Box
             sx={{
                 width: 34,
                 height: 34,
-                borderRadius: "999px",
-                bgcolor: bg,
+                borderRadius: "50%",
+                bgcolor: variant === "done" || variant === "active" ? "#22C55E" : "#E5E7EB",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                color,
-                fontWeight: 900,
-                fontSize: 15,
-                flexShrink: 0,
+                color: "#fff",
+                fontWeight: 800,
             }}
         >
-            {value}
+            {value === "icon" ? (
+                <CheckIcon sx={{ fontSize: 26 }} />
+            ) : (
+                value
+            )}
         </Box>
     );
 };
+
+function isValidEmail(email: string) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
 
 const CreateEmployeePage = () => {
     const navigate = useNavigate();
@@ -85,10 +88,12 @@ const CreateEmployeePage = () => {
     const progress = useMemo(() => (step === 1 ? 0 : 50), [step]);
 
     const nameError = touched.name && form.name.trim() === "";
-    const emailError = touched.email && form.email.trim() === "";
     const departmentError = touched.department && form.department.trim() === "";
 
-    const canGoNextStep1 = form.name.trim() !== "" && form.email.trim() !== "";
+    const canGoNextStep1 =
+        form.name.trim() !== "" &&
+        form.email.trim() !== "" &&
+        isValidEmail(form.email);
     const canFinishStep2 = form.department.trim() !== "";
 
     async function onNext() {
@@ -123,7 +128,6 @@ const CreateEmployeePage = () => {
 
     return (
         <Box sx={{ fontFamily: "Inter, sans-serif", color: text }}>
-            {/* Breadcrumb */}
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                 <Typography
                     sx={{
@@ -143,12 +147,18 @@ const CreateEmployeePage = () => {
                 </Typography>
             </Box>
 
-            {/* Progress */}
-            <Box sx={{ mt: 2.25 }}>
+            <Box
+                sx={{
+                    mt: 2.25,
+                    display: "flex",
+                    alignItems: "center",
+                }}
+            >
                 <LinearProgress
                     variant="determinate"
                     value={progress}
                     sx={{
+                        flex: 1,
                         height: 6,
                         borderRadius: 999,
                         bgcolor: "#D1FAE5",
@@ -159,20 +169,19 @@ const CreateEmployeePage = () => {
                     }}
                 />
 
-                <Box
+                <Typography
                     sx={{
-                        mt: 1.25,
-                        display: "flex",
-                        justifyContent: "flex-end",
+                        fontSize: 16,
+                        color: muted,
+                        fontWeight: 500,
+                        minWidth: 48,
+                        textAlign: "right",
                     }}
                 >
-                    <Typography sx={{ fontSize: 16, color: muted, fontWeight: 600 }}>
-                        {progress}%
-                    </Typography>
-                </Box>
+                    {progress}%
+                </Typography>
             </Box>
 
-            {/* Body grid */}
             <Box
                 sx={{
                     mt: 3.5,
@@ -182,14 +191,12 @@ const CreateEmployeePage = () => {
                     alignItems: "start",
                 }}
             >
-                {/* Left steps */}
                 <Box sx={{ pt: 1 }}>
-                    {/* Step 1 */}
                     <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                         {step === 1 ? (
                             <StepCircle variant="active" value={1} />
                         ) : (
-                            <StepCircle variant="done" value="✓" />
+                            <StepCircle variant="done" value="icon" />
                         )}
 
                         <Typography sx={{ fontSize: 18, fontWeight: 700, color: text }}>
@@ -197,16 +204,16 @@ const CreateEmployeePage = () => {
                         </Typography>
                     </Box>
 
-                    {/* connector */}
                     <Box
                         sx={{
                             ml: "16px",
-                            height: "84px",
+                            mt: "16px",
+                            mb: "16px",
+                            height: step === 1 ? "150px" : "54px",
                             borderLeft: `2px solid ${border}`,
                         }}
                     />
 
-                    {/* Step 2 */}
                     <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                         <StepCircle
                             variant={step === 2 ? "active" : "inactive"}
@@ -216,7 +223,7 @@ const CreateEmployeePage = () => {
                         <Typography
                             sx={{
                                 fontSize: 18,
-                                fontWeight: step === 2 ? 800 : 700,
+                                fontWeight: 700,
                                 color: step === 2 ? text : muted,
                             }}
                         >
@@ -225,15 +232,14 @@ const CreateEmployeePage = () => {
                     </Box>
                 </Box>
 
-                {/* Right content */}
                 <Box>
                     {step === 1 ? (
                         <>
                             <Typography
                                 sx={{
                                     m: 0,
-                                    fontSize: 36,
-                                    fontWeight: 800,
+                                    fontSize: 32,
+                                    fontWeight: 700,
                                     color: "#6B7280",
                                     letterSpacing: "-0.02em",
                                 }}
@@ -244,8 +250,8 @@ const CreateEmployeePage = () => {
                             <Box sx={{ mt: 4, maxWidth: 980 }}>
                                 <TextField
                                     fullWidth
-                                    label="Título"
-                                    placeholder="João da Silva"
+                                    label="Nome"
+                                    placeholder="Ex: João da Silva"
                                     value={form.name}
                                     onChange={(e) =>
                                         setForm((p) => ({ ...p, name: e.target.value }))
@@ -256,7 +262,7 @@ const CreateEmployeePage = () => {
                                     InputLabelProps={{
                                         sx: {
                                             fontWeight: 600,
-                                            color: "#111827",
+                                            color: "#A7F3D0",
                                         },
                                     }}
                                     sx={{
@@ -284,14 +290,24 @@ const CreateEmployeePage = () => {
                                 <TextField
                                     fullWidth
                                     label="E-mail"
-                                    placeholder="e.g. john@gmail.com"
+                                    placeholder="Ex: john@gmail.com"
                                     value={form.email}
-                                    onChange={(e) =>
-                                        setForm((p) => ({ ...p, email: e.target.value }))
-                                    }
+                                    onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
                                     onBlur={() => setTouched((p) => ({ ...p, email: true }))}
-                                    error={emailError}
-                                    helperText={emailError ? "E-mail é obrigatório" : " "}
+                                    error={
+                                        touched.email &&
+                                        (form.email.trim() === "" ||
+                                            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim()))
+                                    }
+                                    helperText={
+                                        touched.email && form.email.trim() === ""
+                                            ? "E-mail é obrigatório"
+                                            : touched.email &&
+                                                form.email.trim() !== "" &&
+                                                !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())
+                                                ? "E-mail inválido"
+                                                : " "
+                                    }
                                     InputLabelProps={{
                                         sx: {
                                             fontWeight: 600,
@@ -303,13 +319,28 @@ const CreateEmployeePage = () => {
                                             height: 64,
                                             borderRadius: "10px",
                                             "& fieldset": {
-                                                borderColor: emailError ? "#DC2626" : "#D1D5DB",
+                                                borderColor:
+                                                    touched.email &&
+                                                        (form.email.trim() === "" ||
+                                                            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim()))
+                                                        ? "#DC2626"
+                                                        : "#D1D5DB",
                                             },
                                             "&:hover fieldset": {
-                                                borderColor: emailError ? "#DC2626" : "#9CA3AF",
+                                                borderColor:
+                                                    touched.email &&
+                                                        (form.email.trim() === "" ||
+                                                            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim()))
+                                                        ? "#DC2626"
+                                                        : "#9CA3AF",
                                             },
                                             "&.Mui-focused fieldset": {
-                                                borderColor: emailError ? "#DC2626" : "#9CA3AF",
+                                                borderColor:
+                                                    touched.email &&
+                                                        (form.email.trim() === "" ||
+                                                            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim()))
+                                                        ? "#DC2626"
+                                                        : "#9CA3AF",
                                             },
                                         },
                                         "& .MuiFormHelperText-root": {
@@ -319,7 +350,7 @@ const CreateEmployeePage = () => {
                                 />
 
                                 <FormControlLabel
-                                    sx={{ mt: 1.5 }}
+                                    sx={{ mt: 1.5, ml: 0.2 }}
                                     control={
                                         <Switch
                                             checked={form.activeOnCreate}
@@ -330,23 +361,40 @@ const CreateEmployeePage = () => {
                                                 }))
                                             }
                                             sx={{
-                                                "& .MuiSwitch-switchBase.Mui-checked": {
-                                                    color: "#FFFFFF",
+                                                width: 48,
+                                                height: 25,
+                                                padding: 0,
+                                                "& .MuiSwitch-switchBase": {
+                                                    padding: 0,
+                                                    margin: "3px",
+                                                    transitionDuration: "200ms",
                                                 },
-                                                "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track":
-                                                {
-                                                    backgroundColor: green,
-                                                    opacity: 1,
+                                                "& .MuiSwitch-thumb": {
+                                                    boxSizing: "border-box",
+                                                    width: 18,
+                                                    height: 18,
+                                                    backgroundColor: "#FFFFFF",
+                                                    boxShadow: "0 4px 10px rgba(0,0,0,0.15)",
                                                 },
                                                 "& .MuiSwitch-track": {
+                                                    borderRadius: 999,
                                                     backgroundColor: "#E5E7EB",
+                                                    opacity: 1,
+                                                },
+                                                "& .MuiSwitch-switchBase.Mui-checked": {
+                                                    transform: "translateX(22px)",
+                                                    color: "#FFFFFF",
+                                                },
+                                                "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+                                                    backgroundColor: "#22C55E",
                                                     opacity: 1,
                                                 },
                                             }}
                                         />
+
                                     }
                                     label={
-                                        <Typography sx={{ fontSize: 18, fontWeight: 500, color: text }}>
+                                        <Typography sx={{ fontSize: 18, fontWeight: 500, color: text, ml: 1 }}>
                                             Ativar ao criar
                                         </Typography>
                                     }
@@ -358,8 +406,8 @@ const CreateEmployeePage = () => {
                             <Typography
                                 sx={{
                                     m: 0,
-                                    fontSize: 36,
-                                    fontWeight: 800,
+                                    fontSize: 32,
+                                    fontWeight: 700,
                                     color: "#6B7280",
                                     letterSpacing: "-0.02em",
                                 }}
@@ -417,7 +465,6 @@ const CreateEmployeePage = () => {
                         </>
                     )}
 
-                    {/* Footer buttons */}
                     <Box
                         sx={{
                             mt: "220px",
@@ -433,7 +480,7 @@ const CreateEmployeePage = () => {
                             disabled={step === 1 || submitting}
                             sx={{
                                 color: step === 1 ? "#CBD5E1" : text,
-                                fontWeight: 800,
+                                fontWeight: 700,
                                 fontSize: 18,
                                 textTransform: "none",
                                 "&.Mui-disabled": {
@@ -451,7 +498,7 @@ const CreateEmployeePage = () => {
                             sx={{
                                 bgcolor: green,
                                 color: "#FFFFFF",
-                                fontWeight: 900,
+                                fontWeight: 700,
                                 fontSize: 18,
                                 px: 4.25,
                                 py: 2.25,

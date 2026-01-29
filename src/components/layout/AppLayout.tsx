@@ -1,5 +1,16 @@
 import { ReactNode } from "react";
-import flugoLogo from "../../assets/logo.png";
+import flugoLogo from "../../assets/flugo.png";
+import userIcon from "../../assets/user.png";
+
+import {
+    Box,
+    IconButton,
+    Stack,
+    Typography,
+} from "@mui/material";
+
+import avatar from "../../assets/avatars/avatar.png";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 type AppLayoutProps = {
     children: ReactNode;
@@ -7,152 +18,153 @@ type AppLayoutProps = {
 
 const AppLayout = ({ children }: AppLayoutProps) => {
     return (
-        <div
-            style={{
+        <Box
+            sx={{
                 minHeight: "100vh",
                 width: "100%",
-                backgroundColor: "#FFFFFF",
+                bgcolor: "#FFFFFF",
                 display: "flex",
                 flexDirection: "row",
             }}
         >
-            {/* Sidebar */}
-            <aside
-                style={{
-                    width: "280px",
-                    padding: "40px 28px 24px 44px",
-                    backgroundColor: "#FFFFFF",
+            <Box
+                component="aside"
+                sx={{
+                    width: 280,
+                    px: "28px",
+                    pt: "40px",
+                    pb: "24px",
+                    pl: "44px",
+                    bgcolor: "#FFFFFF",
                 }}
             >
-                {/* Logo */}
-                <div
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "14px",
-                    }}
-                >
-                    <img
+                <Stack direction="row" alignItems="center" spacing="14px">
+                    <Box
+                        component="img"
                         src={flugoLogo}
                         alt="Flugo"
-                        style={{
-                            width: "36px",
-                            height: "36px",
+                        sx={{
+                            height: 36,
                             display: "block",
                         }}
                     />
 
-                    <span
-                        style={{
-                            fontSize: "26px",
-                            fontWeight: 800,
-                            color: "#111827",
-                            letterSpacing: "-0.02em",
-                            fontFamily: "Inter, sans-serif",
-                        }}
-                    >
-                        Flugo
-                    </span>
-                </div>
+                </Stack>
 
-                {/* Menu Item */}
-                <div style={{ marginTop: "60px" }}>
-                    <div
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "16px",
-                            color: "#6B7280",
-                            fontFamily: "Inter, sans-serif",
+                <Box sx={{ mt: "60px" }}>
+                    <Stack direction="row" alignItems="center" spacing="16px">
+                        <Box
+                            component="img"
+                            src={userIcon}
+                            alt="Usuário"
+                            sx={{
+                                width: 25,
+                                height: 25,
+                                display: "block",
+                            }}
+                        />
+
+                        <Typography
+                            sx={{
+                                fontSize: 18,
+                                fontWeight: 600,
+                                color: "#6B7280",
+                                fontFamily: "Inter, sans-serif",
+                            }}
+                        >
+                            Colaboradores
+                        </Typography>
+
+                        <Box sx={{ flex: 1 }} />
+
+                        <ChevronRightIcon sx={{ fontSize: 28, color: "#9CA3AF" }} />
+                    </Stack>
+                </Box>
+            </Box>
+
+            <Box sx={{ width: 24, position: "relative" }}>
+                <Box
+                    sx={{
+                        position: "absolute",
+                        top: 0,
+                        bottom: 0,
+                        left: "12px",
+                        width: "1px",
+                        backgroundImage:
+                            "repeating-linear-gradient(to bottom, #E5E7EB 0px, #E5E7EB 3px, transparent 3px, transparent 7px)",
+                    }}
+                />
+            </Box>
+
+
+            <Box component="main" sx={{ flex: 1, bgcolor: "#FFFFFF" }}>
+                <Box
+                    sx={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        pt: "32px",
+                        pr: "54px",
+                    }}
+                >
+                    <IconButton
+                        disableRipple
+                        sx={{
+                            p: 0,
+                            "&:hover": { bgcolor: "transparent" },
                         }}
+                        aria-label="Usuário"
                     >
-                        <div
-                            style={{
-                                width: "44px",
-                                height: "44px",
-                                borderRadius: "12px",
-                                backgroundColor: "#F3F4F6",
+                        <Box
+                            sx={{
+                                width: 56,
+                                height: 56,
+                                borderRadius: "50%",
+                                backgroundColor: "#E5E7EB",
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
                             }}
                         >
-                            {/* Ícone simples sem MUI */}
-                            <span style={{ fontSize: "18px", color: "#9CA3AF" }}>👥</span>
-                        </div>
+                            <Box
+                                sx={{
+                                    width: 48,
+                                    height: 48,
+                                    borderRadius: "50%",
+                                    backgroundColor: "#FFFFFF",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <Box
+                                    component="img"
+                                    src={avatar}
+                                    alt="Avatar"
+                                    sx={{
+                                        width: 40,
+                                        height: 40,
+                                        borderRadius: "50%",
+                                        display: "block",
+                                    }}
+                                />
+                            </Box>
+                        </Box>
 
-                        <span style={{ fontSize: "18px", fontWeight: 500 }}>
-                            Colaboradores
-                        </span>
+                    </IconButton>
+                </Box>
 
-                        <div style={{ flex: 1 }} />
-
-                        <span style={{ fontSize: "22px", color: "#9CA3AF" }}>›</span>
-                    </div>
-                </div>
-            </aside>
-
-            {/* Linha pontilhada */}
-            <div
-                style={{
-                    width: "24px",
-                    position: "relative",
-                }}
-            >
-                <div
-                    style={{
-                        position: "absolute",
-                        top: 0,
-                        bottom: 0,
-                        left: "12px",
-                        borderLeft: "2px dotted #E5E7EB",
-                    }}
-                />
-            </div>
-
-            {/* Conteúdo */}
-            <main style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
-                {/* Avatar topo direito */}
-                <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        paddingTop: "32px",
-                        paddingRight: "52px",
-                    }}
-                >
-                    <div
-                        style={{
-                            width: "56px",
-                            height: "56px",
-                            borderRadius: "999px",
-                            backgroundColor: "#E5E7EB",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontFamily: "Inter, sans-serif",
-                            color: "#9CA3AF",
-                            fontWeight: 700,
-                        }}
-                    >
-                        👤
-                    </div>
-                </div>
-
-                {/* Área onde as páginas entram */}
-                <div
-                    style={{
-                        paddingLeft: "88px",
-                        paddingRight: "56px",
-                        paddingTop: "24px",
-                        paddingBottom: "56px",
-                        maxWidth: "1120px",
+                <Box
+                    sx={{
+                        pl: "32px",
+                        pr: "54px",
+                        pt: "24px",
+                        pb: "56px",
                     }}
                 >
                     {children}
-                </div>
-            </main>
-        </div>
+                </Box>
+            </Box>
+        </Box>
     );
 };
 
