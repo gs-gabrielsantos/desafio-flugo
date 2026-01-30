@@ -6,7 +6,6 @@ import {
     Checkbox,
     Paper,
     Skeleton,
-    Stack,
     TextField,
     Typography,
     InputAdornment,
